@@ -24,7 +24,7 @@ async def youtube_subscribers(channel_id: str, api_key: str) -> int:
     response = await get_json(url)
 
     items = response["items"]
-    if len(items):
+    if len(items) < 1:
         raise ValueError("Not enough items")
 
     subscribers = items[0]["statistics"]["subscriberCount"]

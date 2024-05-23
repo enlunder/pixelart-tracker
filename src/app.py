@@ -21,9 +21,14 @@ def parse_arguments(args):
         description="control your 16x16 or 32x32 pixel displays"
     )
     parser.add_argument(
+        "--scan",
+        action="store_true",
+        help="Scans all bluetooth devices in range for iDotMatrix displays",
+    )
+    parser.add_argument(
         "--address",
         action="store",
-        help="the bluetooth address of the device",
+        help="Bluetooth address of the device to connect",
     )
     arguments = parser.parse_args(args)
 
@@ -41,7 +46,7 @@ async def process_subscribers(cmd):
         create_subscribers_image(subs_str, Path(tmp_image.name))
         logger.debug(f"New Image generated: {tmp_image.name}")
 
-        await cmd.image(tmp_image.name, False)
+        await cmd.set_image(tmp_image.name, False)
         logger.debug(f"Sent image to screen: {tmp_image.name}")
 
 
@@ -58,11 +63,15 @@ async def main():
 
     args = parse_arguments(sys.argv[1:])
 
+    if args.scan:
+        await cmd.scan()
+        quit()
+
     await cmd.connect(args.address)
 
     while True:
         await process_subscribers(cmd)
-        time.sleep(3)
+        time.sleep(settings.REFRESH_TIME)
 
 
 if __name__ == "__main__":

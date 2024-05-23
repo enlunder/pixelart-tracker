@@ -12,7 +12,11 @@ class Settings(BaseSettings):
     )
     API_KEY = Field(
         default="",
-        description="Youtube Date API Key to use on requests.",
+        description="Youtube Data API Key to use on requests.",
+    )
+    REFRESH_TIME = Field(
+        default=30,
+        description="Refresh time amount in seconds to get last statistics from Youtube and refresh the screen image.",
     )
 
     class Config:
