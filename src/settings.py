@@ -15,7 +15,6 @@ class Settings(BaseSettings):
         description="Youtube Date API Key to use on requests.",
     )
 
-
     class Config:
         env_prefix = "SUBS_"
         case_sensitive = False
