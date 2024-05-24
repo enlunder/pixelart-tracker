@@ -41,8 +41,8 @@ Request an API KEY going here https://console.cloud.google.com/apis/api/youtube.
 5.  Set env variables:
 
 ```
-export SUBS_CHANNEL_ID=YOUR_YOUTUBE_CHANNEL_ID
-export SUBS_API_KEY=YOUR_YOUTUBE_API_KEY
+export SUBS_YOUTUBE_CHANNEL_ID=YOUR_YOUTUBE_CHANNEL_ID
+export SUBS_YOUTUBE_API_KEY=YOUR_YOUTUBE_API_KEY
 
 ```
 

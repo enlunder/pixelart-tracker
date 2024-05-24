@@ -1,8 +1,5 @@
 import sys
-import tempfile
 import time
-from pathlib import Path
-from random import randrange
 
 import argparse
 import asyncio
@@ -12,7 +9,7 @@ import logging
 from screen import IDotMatrixScreen
 
 from settings import settings
-from youtube import youtube_subscribers, format_subscribers, create_subscribers_image
+from tiles import YoutubeViewers, Crypto
 
 logger = logging.getLogger(__name__)
 
@@ -44,32 +41,6 @@ def parse_arguments(args):
     return arguments
 
 
-async def format_and_send_to_screen(idms: IDotMatrixScreen, subscribers):
-    subs_str = format_subscribers(subscribers)
-    logger.debug(f"The formatted total subscribers: {subs_str}")
-
-    with tempfile.NamedTemporaryFile(mode="wb", suffix='.png') as tmp_image:
-        create_subscribers_image(subs_str, Path(tmp_image.name))
-        logger.debug(f"New Image generated: {tmp_image.name}")
-
-        await idms.set_image(Path(tmp_image.name), False)
-        logger.debug(f"Sent image to screen: {tmp_image.name}")
-
-
-async def process_subscribers(idms: IDotMatrixScreen):
-    subscribers = await youtube_subscribers(settings.CHANNEL_ID, settings.API_KEY)
-    logger.debug(f"The total subscribers: {subscribers}")
-
-    await format_and_send_to_screen(idms, subscribers)
-
-
-async def fake_subscribers(idms: IDotMatrixScreen):
-    global test_subscribers
-    await format_and_send_to_screen(idms, test_subscribers)
-
-    test_subscribers = test_subscribers + randrange(1000)
-
-
 async def main():
 
     log_format = (
@@ -89,12 +60,22 @@ async def main():
 
     await idms.connect(args.address)
 
+    tile_collection = str(settings.TILES).split(",")
+    tiles = []
+    for tile in tile_collection:
+        if tile == "yt":
+            instance = YoutubeViewers(idms, args.test)
+            tiles.append(instance)
+        elif tile == "crypto":
+            crypto_tiles = str(settings.CRYPTO_CURRENCIES).split(",")
+            for crypto_tile in crypto_tiles:
+                instance = Crypto(idms, crypto_tile, args.test)
+                tiles.append(instance)
+
     while True:
-        if args.test:
-            await fake_subscribers(idms)
-        else:
-            await process_subscribers(idms)
-        time.sleep(settings.REFRESH_TIME)
+        for tile in tiles:
+            await tile.run()
+            time.sleep(settings.REFRESH_TIME)
 
 
 if __name__ == "__main__":

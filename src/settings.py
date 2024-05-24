@@ -2,21 +2,38 @@ from pydantic import BaseSettings, Field, HttpUrl
 
 
 class Settings(BaseSettings):
-    API_HOST: HttpUrl = Field(
+    # YouTube viewer settings
+    YOUTUBE_API_HOST: HttpUrl = Field(
         default="https://www.googleapis.com/youtube/v3/channels?part=statistics",
         description="URL of the reference to connect through YouTube.",
     )
-    CHANNEL_ID = Field(
+    YOUTUBE_CHANNEL_ID = Field(
         default="",
         description="Youtube Channel to check the subscribers.",
     )
-    API_KEY = Field(
+    YOUTUBE_API_KEY = Field(
         default="",
         description="Youtube Data API Key to use on requests.",
     )
+
+    # Crypto settings
+    CRYPTO_API_HOST: HttpUrl = Field(
+        default="https://api.coingecko.com/api/v3",
+        description="URL of the reference to track cryptocurrencies data.",
+    )
+    CRYPTO_CURRENCIES = Field(
+        default="bitcoin,ethereum,polkadot",
+        description="Cryptocurrencies symbols split by comas.",
+    )
+
+    # General settings
+    TILES = Field(
+        default="yt,crypto",
+        description="Amount of tiles to show in loop.",
+    )
     REFRESH_TIME = Field(
-        default=30,
-        description="Refresh time amount in seconds to get last statistics from Youtube and refresh the screen image.",
+        default=10,
+        description="Refresh time amount in seconds to refresh the screen image with the next tile.",
     )
 
     class Config:
