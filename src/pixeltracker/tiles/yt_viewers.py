@@ -8,7 +8,7 @@ from ..settings import settings
 
 from .tile import IDotMatrixTile
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("pixelart-tracker")
 
 
 class YoutubeViewers(IDotMatrixTile):

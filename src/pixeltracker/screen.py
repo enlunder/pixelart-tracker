@@ -8,7 +8,7 @@ from idotmatrix import ConnectionManager, Image
 
 class IDotMatrixScreen:
     conn = ConnectionManager()
-    logging = logging.getLogger("pixelart-tracker." + __name__)
+    logging = logging.getLogger("pixelart-tracker")
     image: Optional[Image] = None
 
     async def scan(self):

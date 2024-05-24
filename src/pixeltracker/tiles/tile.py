@@ -10,7 +10,7 @@ import aiohttp
 # idotmatrix imports
 from ..screen import IDotMatrixScreen
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("pixelart-tracker")
 
 
 class IDotMatrixTile(ABC):

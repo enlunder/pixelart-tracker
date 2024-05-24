@@ -1,3 +1,5 @@
+import logging
+
 from pydantic import BaseSettings, Field, HttpUrl
 
 
@@ -34,6 +36,10 @@ class Settings(BaseSettings):
     REFRESH_TIME = Field(
         default=15,
         description="Refresh time amount in seconds to refresh the screen image with the next tile.",
+    )
+    LOG_LEVEL = Field(
+        default=logging.WARNING,
+        description="Default log level for different packages",
     )
 
     class Config:

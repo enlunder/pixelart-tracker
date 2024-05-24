@@ -79,7 +79,7 @@ def main():
     logging.basicConfig(
         format=log_format,
     )
-    logger = logging.getLogger(__name__)
+    logger = logging.getLogger("pixelart-tracker")
 
     stdout = colorlog.StreamHandler(stream=sys.stdout)
 
@@ -90,8 +90,13 @@ def main():
     stdout.setFormatter(fmt)
     logger.addHandler(stdout)
 
-    logger.setLevel(logging.WARNING)
+    logger.setLevel(settings.LOG_LEVEL)
     logger.info("initialize app")
+
+    logging.getLogger("idotmatrix").setLevel(settings.LOG_LEVEL)
+    logging.getLogger('PIL').setLevel(settings.LOG_LEVEL)
+    logging.getLogger("asyncio").setLevel(settings.LOG_LEVEL)
+
     try:
         asyncio.run(run())
     except KeyboardInterrupt:
