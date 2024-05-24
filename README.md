@@ -13,32 +13,17 @@ This project uses Python to display the number of subscribers of a YouTube chann
 
 **Installation:**
 
-1.  Clone the repository:
+1.  Install the python package:
 
 ```
-git clone https://github.com/nesitor/subscribers-viewer.git
-
-```
-
-2.  Create the venv:
-
-```
-python3 virtualenv venv
-source ./venv/bin/activate
+pip install pixelart-tracker
 
 ```
 
-3.  Install the dependencies:
-
-```
-pip install -e .
-
-```
-
-4.  Get your Youtube API KEY:
+2.  Get your Youtube API KEY:
 Request an API KEY going here https://console.cloud.google.com/apis/api/youtube.googleapis.com/credentials
 
-5.  Set env variables:
+3.  Set env variables:
 
 ```
 export SUBS_YOUTUBE_CHANNEL_ID=YOUR_YOUTUBE_CHANNEL_ID
@@ -52,14 +37,14 @@ export SUBS_YOUTUBE_API_KEY=YOUR_YOUTUBE_API_KEY
 1.  Scan for compatible devices:
 
 ```
-python3 src/app.py --scan
+pix-track --scan
 
 ```
 
-2.  Run the client:
+2.  Run on device:
 
 ```
-python3 src/app.py --address <device_mac_address>/auto
+pix-track --address <device_mac_address>/auto
 
 ```
 
@@ -68,7 +53,7 @@ Where `<device_mac_address>` is the device physical address or `auto` is to auto
 **Example:**
 
 ```
-python3 src/app.py --address 37:D4:98:8F:2B:C8
+pix-track --address 37:D4:98:8F:2B:C8
 
 ```
 
