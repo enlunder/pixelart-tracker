@@ -1,16 +1,15 @@
 import logging
+import os
 import tempfile
 from decimal import Decimal
 from pathlib import Path
 from typing import Optional
 
 from PIL import Image, ImageDraw, ImageFont
+from ..screen import IDotMatrixScreen
+from ..settings import settings
 
-from screen import IDotMatrixScreen
-
-from settings import settings
 from .tile import IDotMatrixTile
-
 
 logger = logging.getLogger(__name__)
 
@@ -47,14 +46,17 @@ class Crypto(IDotMatrixTile):
         self.price_change_24h = Decimal(str(price_24h_change))
 
     def create_image(self, text: str, image_path: Path):
-        image = Image.open(f"resources/{self.crypto}-background.png")
+        current = Path(__file__).resolve()
+        background_path = current / f"../../resources/{self.crypto}-background.png"
+        image = Image.open(background_path)
         draw = ImageDraw.Draw(image)
-        font = ImageFont.truetype('resources/retro-pixel-petty-5h.ttf', size=5)
-        color = 'rgb(255, 255, 255)'  # symbol in white color
+        font_path = current / f"../../resources/retro-pixel-petty-5h.ttf"
+        font = ImageFont.truetype(font_path, size=5)
+        color = "rgb(255, 255, 255)"  # symbol in white color
         if self.price_change_24h >= 0:
-            price_color = 'rgb(0, 255, 0)'
+            price_color = "rgb(0, 255, 0)"
         else:
-            price_color = 'rgb(255, 0, 0)'
+            price_color = "rgb(255, 0, 0)"
 
         init_x = self.get_text_initial_position(self.symbol)
         (x, y) = (init_x, 16)
@@ -72,7 +74,7 @@ class Crypto(IDotMatrixTile):
         price = self.format_number(self.price)
         price_str = f"${price}"
 
-        with tempfile.NamedTemporaryFile(mode="wb", suffix='.png') as tmp_image:
+        with tempfile.NamedTemporaryFile(mode="wb", suffix=".png") as tmp_image:
             self.create_image(price_str, Path(tmp_image.name))
             logger.debug(f"New Image generated: {tmp_image.name}")
 

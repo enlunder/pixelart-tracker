@@ -4,5 +4,8 @@
 # Environment file
 .env
 
+# Published files
+dist
+
 # Python env files
 src/subscribers_viewer.egg-info

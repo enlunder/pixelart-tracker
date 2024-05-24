@@ -1,18 +1,14 @@
-
 import logging
 from pathlib import Path
 from typing import Optional
 
-from PIL import Image
-
 # idotmatrix imports
-from idotmatrix import ConnectionManager
-from idotmatrix import Image
+from idotmatrix import ConnectionManager, Image
 
 
 class IDotMatrixScreen:
     conn = ConnectionManager()
-    logging = logging.getLogger("idotmatrix." + __name__)
+    logging = logging.getLogger("pixelart-tracker." + __name__)
     image: Optional[Image] = None
 
     async def scan(self):

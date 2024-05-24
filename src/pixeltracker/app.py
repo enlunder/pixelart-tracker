@@ -1,26 +1,21 @@
-import sys
-import time
-
 import argparse
 import asyncio
 import logging
+import sys
+import time
+
+import colorlog
 
 # idotmatrix imports
-from screen import IDotMatrixScreen
-
-from settings import settings
-from tiles import YoutubeViewers, Crypto
-
-logger = logging.getLogger(__name__)
-
+from .screen import IDotMatrixScreen
+from .settings import settings
+from .tiles import Crypto, YoutubeViewers
 
 test_subscribers = 0
 
 
 def parse_arguments(args):
-    parser = argparse.ArgumentParser(
-        description="control your 16x16 or 32x32 pixel displays"
-    )
+    parser = argparse.ArgumentParser(description="control your 16x16 or 32x32 pixel displays")
     parser.add_argument(
         "--scan",
         action="store_true",
@@ -36,20 +31,21 @@ def parse_arguments(args):
         action="store_true",
         help="Fake subscribers numbers on every refresh to show bigger numbers",
     )
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        dest="loglevel",
+        help="set loglevel to INFO",
+        action="store_const",
+        const=logging.INFO,
+        default=logging.WARNING,
+    )
     arguments = parser.parse_args(args)
 
     return arguments
 
 
-async def main():
-
-    log_format = (
-        "%(asctime)s | %(levelname)s | %(message)s"
-    )
-    logging.basicConfig(
-        format=log_format,
-    )
-
+async def run():
     idms = IDotMatrixScreen()
 
     args = parse_arguments(sys.argv[1:])
@@ -78,10 +74,25 @@ async def main():
             time.sleep(settings.REFRESH_TIME)
 
 
-if __name__ == "__main__":
-    log = logging.getLogger("idotmatrix")
-    log.info("initialize app")
+def main():
+    log_format = "%(asctime)s | %(levelname)s | %(message)s"
+    logging.basicConfig(
+        format=log_format,
+    )
+    logger = logging.getLogger(__name__)
+
+    stdout = colorlog.StreamHandler(stream=sys.stdout)
+
+    fmt = colorlog.ColoredFormatter(
+        "%(name)s: %(white)s%(asctime)s%(reset)s | %(log_color)s%(levelname)s%(reset)s | %(blue)s%(filename)s:%(lineno)s%(reset)s | %(process)d >>> %(log_color)s%(message)s%(reset)s"
+    )
+
+    stdout.setFormatter(fmt)
+    logger.addHandler(stdout)
+
+    logger.setLevel(logging.WARNING)
+    logger.info("initialize app")
     try:
-        asyncio.run(main())
+        asyncio.run(run())
     except KeyboardInterrupt:
-        log.info("Caught keyboard interrupt. Stopping app.")
+        logger.info("Caught keyboard interrupt. Stopping app.")

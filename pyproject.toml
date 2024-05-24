@@ -1,7 +1,6 @@
 [project]
-
 name = "pixelart-tracker"
-version = "0.0.1"
+version = "0.1.1"
 description = "Show YouTube subscribers and Crypto-currency tracking on an iDotMatrix 32x32 pixels screen"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -19,22 +18,22 @@ dependencies = [
   "asyncio",
   "idotmatrix==0.0.4",
   "pydantic[dotenv]~=1.10.13",
-  "pillow~=10.3"
+  "pillow~=10.3",
+  "colorlog~=6.8"
 ]
 
 [project.urls]
-
 "Homepage" = "https://andresmolins.dev"
 "Source" = "https://github.com/nesitor/subscribers-viewer"
 
 [project.scripts]
-subs-view = "app:main"
+pix-track = "pixeltracker.app:main"
 
 [tool.hatch.version]
 source = "vcs"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/"]
+packages = ["src/pixeltracker", "resources/"]
 
 [tool.hatch.metadata]
 allow-direct-references = true
@@ -44,10 +43,36 @@ platforms = ["linux"]
 dependencies = []
 
 [tool.hatch.envs.default.scripts]
-cli = "subs-view {args:--help}"
+cli = "pix-track {args:--help}"
 
 [[tool.hatch.envs.all.matrix]]
 python = ["3.9", "3.10", "3.11", "3.12"]
+
+[tool.hatch.envs.lint]
+detached = true
+dependencies = [
+  "black==24.1.1",
+  "mypy==1.8.0",
+  "ruff==0.1.15",
+  "isort==5.13.2",
+]
+[tool.hatch.envs.lint.scripts]
+typing = "mypy {args:src/aleph/vm/ tests/ examples/example_fastapi runtimes/aleph-debian-12-python}"
+style = [
+  #  "ruff {args:.}",
+  "black --check --diff {args:.}",
+  "isort --check-only --profile black {args:.}",
+]
+fmt = [
+  "black {args:.}",
+  #  "ruff --fix {args:.}",
+  "isort --profile black {args:.}",
+  "style",
+]
+all = [
+  "style",
+  "typing",
+]
 
 [tool.pytest.ini_options]
 pythonpath = [
@@ -123,3 +148,7 @@ known-first-party = ["app"]
 [tool.ruff.per-file-ignores]
 # Tests can use magic values, assertions, and relative imports
 "tests/**/*" = ["PLR2004", "S101", "TID252"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

@@ -1,15 +1,14 @@
+import logging
 import math
+from abc import ABC, abstractmethod
+from decimal import Decimal
 from pathlib import Path
 from typing import Union
 
 import aiohttp
-import logging
-
-from abc import ABC, abstractmethod
-from decimal import Decimal
 
 # idotmatrix imports
-from screen import IDotMatrixScreen
+from ..screen import IDotMatrixScreen
 
 logger = logging.getLogger(__name__)
 
@@ -87,6 +86,3 @@ class IDotMatrixTile(ABC):
     @abstractmethod
     async def run(self):
         await self.get_data()
-
-
-
