@@ -32,7 +32,7 @@ class Settings(BaseSettings):
         description="Amount of tiles to show in loop.",
     )
     REFRESH_TIME = Field(
-        default=10,
+        default=15,
         description="Refresh time amount in seconds to refresh the screen image with the next tile.",
     )
 

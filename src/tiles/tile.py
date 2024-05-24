@@ -37,7 +37,11 @@ class IDotMatrixTile(ABC):
         else:
             decimal_number = number
 
-        if 1000 <= number < 10000:
+        if 1 <= number < 100 and decimal_number % 1 != 0:
+            text = str(round(decimal_number, 2))
+        elif 100 <= number < 1000 and decimal_number % 1 != 0:
+            text = str(round(decimal_number, 1))
+        elif 1000 <= number < 10000:
             decimal_number = decimal_number / Decimal(1000)
             text = str(round(decimal_number, 2)) + "K"
         elif 10000 <= number < 100000:
