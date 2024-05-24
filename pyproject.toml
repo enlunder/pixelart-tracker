@@ -1,8 +1,8 @@
 [project]
 
-name = "subscribers-viewer"
+name = "pixelart-tracker"
 version = "0.0.1"
-description = "Show YouTube subscribers on an iDotMatrix 32x32 pixels screen"
+description = "Show YouTube subscribers and Crypto-currency tracking on an iDotMatrix 32x32 pixels screen"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {file = "LICENSE"}
