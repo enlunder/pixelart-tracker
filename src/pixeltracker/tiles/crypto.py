@@ -74,8 +74,10 @@ class Crypto(IDotMatrixTile):
         price = self.format_number(self.price)
         price_str = f"${price}"
 
-        with tempfile.NamedTemporaryFile(mode="wb", suffix=".png") as tmp_image:
+        with tempfile.NamedTemporaryFile(mode="wb", suffix=".png", delete=False) as tmp_image:
             self.create_image(price_str, Path(tmp_image.name))
             logger.debug(f"New Image generated: {tmp_image.name}")
 
             await self.send(Path(tmp_image.name), False)
+            tmp_image.close()
+            os.unlink(tmp_image.name)
