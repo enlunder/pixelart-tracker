@@ -59,8 +59,10 @@ class YoutubeViewers(IDotMatrixTile):
         await super().run()
         subs_str = self.format_number(self.subscribers)
 
-        with tempfile.NamedTemporaryFile(mode="wb", suffix=".png") as tmp_image:
+        with tempfile.NamedTemporaryFile(mode="wb", suffix=".png", delete=False) as tmp_image:
             self.create_image(subs_str, Path(tmp_image.name))
             logger.debug(f"New Image generated: {tmp_image.name}")
 
             await self.send(Path(tmp_image.name), False)
+            tmp_image.close()
+            os.unlink(tmp_image.name)
