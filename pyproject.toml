@@ -1,6 +1,6 @@
 [project]
 name = "pixelart-tracker"
-version = "0.1.3"
+version = "0.1.4"
 description = "Show YouTube subscribers and Crypto-currency tracking on an iDotMatrix 32x32 pixels screen"
 readme = "README.md"
 requires-python = ">=3.10"
