@@ -24,7 +24,7 @@ dependencies = [
 
 [project.urls]
 "Homepage" = "https://andresmolins.dev"
-"Source" = "https://github.com/nesitor/subscribers-viewer"
+"Source" = "https://github.com/nesitor/pixelart-tracker"
 
 [project.scripts]
 pix-track = "pixeltracker.app:main"
