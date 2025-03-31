@@ -46,11 +46,12 @@ class Crypto(IDotMatrixTile):
         self.price_change_24h = Decimal(str(price_24h_change))
 
     def create_image(self, text: str, image_path: Path):
-        current = Path(__file__).resolve()
-        background_path = current / f"../../resources/{self.crypto}-background.png"
+        current = Path(__file__).parent.resolve()
+        background_path = current / f"../resources/{self.crypto}-background.png"
+        
         image = Image.open(background_path)
         draw = ImageDraw.Draw(image)
-        font_path = current / f"../../resources/retro-pixel-petty-5h.ttf"
+        font_path = current / f"../resources/retro-pixel-petty-5h.ttf"
         font = ImageFont.truetype(font_path, size=5)
         color = "rgb(255, 255, 255)"  # symbol in white color
         if self.price_change_24h >= 0:

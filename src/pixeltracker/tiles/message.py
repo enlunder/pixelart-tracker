@@ -23,8 +23,8 @@ class Message(IDotMatrixTile):
         self.message = message
 
     async def run(self):
-        current = Path(__file__).resolve()
-        font_path = current / f"../../resources/org_01.ttf"
+        current = Path(__file__).parent.resolve()
+        font_path = current / f"../resources/org_01.ttf"
         await self.send_text(self.message, font_path)
     
     async def get_data(self):
