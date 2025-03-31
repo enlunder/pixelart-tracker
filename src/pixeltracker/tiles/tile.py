@@ -36,7 +36,9 @@ class IDotMatrixTile(ABC):
         else:
             decimal_number = number
 
-        if 1 <= number < 100 and decimal_number % 1 != 0:
+        if 0 <= number < 1 and decimal_number % 1 != 0:
+            text = str(round(decimal_number, 3))
+        elif 1 <= number < 100 and decimal_number % 1 != 0:
             text = str(round(decimal_number, 2))
         elif 100 <= number < 1000 and decimal_number % 1 != 0:
             text = str(round(decimal_number, 1))
@@ -71,6 +73,8 @@ class IDotMatrixTile(ABC):
             offset = -2
         if text.count("M") >= 1:
             offset = offset + 1
+        if len(text) == 4: # Quai
+            offset = -3
         total_pixels = (chars * 4) + (chars - 1) + offset  # 4px per character + 1px between characters + offset
 
         return max(math.floor((total_screen_size - total_pixels) / 2), 0)
@@ -78,6 +82,10 @@ class IDotMatrixTile(ABC):
     async def send(self, image_path: Path, process_image: bool):
         await self.idms.set_image(image_path, process_image)
         logger.debug(f"Sent image to screen: {image_path}")
+
+    async def send_text(self, text: str, font_path: Path): 
+        await self.idms.set_text(text, font_path)
+        logger.debug(f"Sent text to screen: {text}")
 
     @abstractmethod
     def create_image(self, text: str, image_path: Path):

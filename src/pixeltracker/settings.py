@@ -24,13 +24,13 @@ class Settings(BaseSettings):
         description="URL of the reference to track cryptocurrencies data.",
     )
     CRYPTO_CURRENCIES = Field(
-        default="bitcoin,ethereum,polkadot",
-        description="Cryptocurrencies symbols split by comas.",
+        default="quai-network,bitcoin,ethereum",#,polkadot",
+        description="Cryptocurrencies symbols split by commas.",
     )
 
     # General settings
     TILES = Field(
-        default="yt,crypto",
+        default="crypto",
         description="Amount of tiles to show in loop.",
     )
     REFRESH_TIME = Field(
@@ -38,7 +38,7 @@ class Settings(BaseSettings):
         description="Refresh time amount in seconds to refresh the screen image with the next tile.",
     )
     LOG_LEVEL = Field(
-        default=logging.WARNING,
+        default=logging.INFO,
         description="Default log level for different packages",
     )
 

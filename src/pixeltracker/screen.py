@@ -3,14 +3,16 @@ from pathlib import Path
 from typing import Optional
 
 # idotmatrix imports
-from idotmatrix import ConnectionManager, Image
-
+from idotmatrix import ConnectionManager, Image, Text, Clock
 
 class IDotMatrixScreen:
     conn = ConnectionManager()
     logging = logging.getLogger("pixelart-tracker")
+    
     image: Optional[Image] = None
-
+    text: Optional[Text] = None
+    clock: Optional[Clock] = None    
+    
     async def scan(self):
         await self.conn.scan()
         quit()
@@ -46,3 +48,30 @@ class IDotMatrixScreen:
                 await self.image.uploadUnprocessed(
                     file_path=str(image_path),
                 )
+
+    async def set_clock(self):
+        """shows a specific clock"""
+        self.logging.info("setting clock") 
+        if not self.clock:
+            self.clock = Clock()
+        
+        await self.clock.setMode(
+            style=1
+        )
+            
+    async def set_text(self, text, font_path):
+        """shows a specific text"""
+        self.logging.info("setting text")
+        self.clock = None # If I don't zero these out the screen stops reacting to inputs
+        self.image = None
+
+        if not self.text:
+            self.text = Text()
+
+        await self.text.setMode(
+            text,
+            font_size=16,
+            speed=100,
+            text_color_mode=2, 
+            font_path=font_path
+        )

@@ -10,6 +10,8 @@ This project uses Python to display the number of subscribers of a YouTube chann
 -   PIL (Pillow) 10.x
 -   idotmatrix 0.0.4
 -   PyDantic 1.10.x
+-   uvicorn
+-   fastapi
 
 **Installation:**
 
@@ -18,6 +20,12 @@ This project uses Python to display the number of subscribers of a YouTube chann
 ```
 pip install pixelart-tracker
 
+```
+
+1.1 Or run it without installing (add the same arguments as under Usage below):
+
+```
+python -c "from src.pixeltracker.app import main;main()" 
 ```
 
 2.  Get your Youtube API KEY:
@@ -56,6 +64,11 @@ Where `<device_mac_address>` is the device physical address or `auto` is to auto
 pix-track --address 37:D4:98:8F:2B:C8
 
 ```
+
+3.  This version includes a web server available listening at all interfaces at port 9191
+
+Try visiting `http://localhost:9191/docs/` in your browser.
+
 
 **Code Explanation:**
 
