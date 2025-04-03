@@ -27,10 +27,13 @@ class Settings(BaseSettings):
         default="quai-network,bitcoin,ethereum",#,polkadot",
         description="Cryptocurrencies symbols split by commas.",
     )
-
+    FINANCE_TICKERS = Field(
+        default="EURUSD=X",
+        description="Yahoo Finance tickers split by commas.",
+    )
     # General settings
     TILES = Field(
-        default="crypto",
+        default="finance,crypto",
         description="Amount of tiles to show in loop.",
     )
     REFRESH_TIME = Field(
@@ -38,7 +41,7 @@ class Settings(BaseSettings):
         description="Refresh time amount in seconds to refresh the screen image with the next tile.",
     )
     LOG_LEVEL = Field(
-        default=logging.INFO,
+        default=logging.DEBUG,
         description="Default log level for different packages",
     )
 
