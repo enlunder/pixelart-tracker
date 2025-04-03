@@ -8,7 +8,7 @@ This project uses Python to display the number of subscribers of a YouTube chann
 -   asyncio
 -   aiohttp
 -   PIL (Pillow) 10.x
--   idotmatrix 0.0.4
+-   idotmatrix 0.0.4 [this fork](https://github.com/enlunder/python3-idotmatrix-library)
 -   PyDantic 1.10.x
 -   uvicorn
 -   fastapi
