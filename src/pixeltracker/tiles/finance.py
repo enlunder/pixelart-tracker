@@ -67,43 +67,6 @@ class Finance(IDotMatrixTile):
             logger.debug(f"Price obtained from Yahoo Finance: {self.price}")
             logger.debug(f"24-hour price change: {self.price_change_24h}%")
 
-        except ValueError as ve:
-            logger.error(f"ValueError: {ve}")
-            raise
-        except Exception as e:
-            logger.error(f"An error occurred: {e}")
-            raise
-        
-    async def get_data2(self):
-        try:
-            # Fetch data using yfinance
-            t = yf.Ticker(self.ticker)
-            data = t.history(period="2d")
-            
-            if data.empty:
-                raise ValueError(f"No data found for ticker {self.ticker}")
-            
-            # Get the latest closing price
-            price = data['Close'].iloc[0]
-            
-            # Calculate the 24-hour price change percentage
-            price_24h_ago = data['Close'].iloc[-1]
-            price_24h_change = ((price - price_24h_ago) / price_24h_ago) * 100
-            
-            self.symbol =  t.info["shortName"].replace('/', '')
-            self.price = Decimal(str(price))
-            self.price_change_24h = Decimal(str(price_24h_change))
-            
-            self.price = Decimal(str(price))
-            price_change_24h = Decimal(str(price_24h_change))
-            
-            logger.debug(f"Obtained data for {self.ticker}")
-            logger.debug(f"Price obtained from Yahoo Finance: {self.price}")
-            logger.debug(f"24-hour price change: {self.price_change_24h}%")
-
-        except ValueError as ve:
-            logger.error(f"ValueError: {ve}")
-            raise
         except Exception as e:
             logger.error(f"An error occurred: {e}")
             raise
