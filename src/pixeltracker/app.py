@@ -9,7 +9,7 @@ import colorlog
 # idotmatrix imports
 from .screen import IDotMatrixScreen
 from .settings import settings
-from .tiles import Crypto, YoutubeViewers, Message
+from .tiles import Crypto, YoutubeViewers, Message, Finance
 
 from fastapi import FastAPI, BackgroundTasks, UploadFile, File, status, Request
 from fastapi.exceptions import HTTPException
@@ -128,8 +128,14 @@ async def run():
             for crypto_tile in crypto_tiles:
                 instance = Crypto(idms, crypto_tile, args.test)
                 tiles.append(instance)
+        elif tile == "finance":
+            finance_tiles = str(settings.FINANCE_TICKERS).split(",")
+            for finance_tile in finance_tiles:
+                instance = Finance(idms, finance_tile, args.test)
+                tiles.append(instance)
+            
     what_tile = 0
-    
+
     while True:
         if message_queue.empty():
             # Run a tile if there are no messages
