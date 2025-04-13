@@ -4,6 +4,7 @@ import tempfile
 from decimal import Decimal
 from pathlib import Path
 from typing import Optional
+from datetime import datetime, timedelta
 
 from PIL import Image, ImageDraw, ImageFont
 
@@ -31,31 +32,43 @@ class Finance(IDotMatrixTile):
 
     async def get_data(self):
         try:
+
+            # Get current UTC time (or use a specific time)
+            current_time = datetime.utcnow().replace(minute=0, second=0, microsecond=0)
+            time_24h_ago = current_time - timedelta(hours=24)
+            
             # Fetch data using yfinance with 1 hour interval for the last 2 days
             t = yf.Ticker(self.ticker)
-            data = t.history(period="2d", interval="1h")
-            
-            if data.empty:
+            data = t.history(
+                start=time_24h_ago - timedelta(hours=1),  # Buffer to ensure coverage
+                end=current_time + timedelta(hours=1),
+                interval="1h",
+                repair=True,
+            )           
+
+            # Also fetch historical data, to use daily closes if needed
+            hist = t.history(period="5d", interval="1d")
+            if hist.empty:
                 raise ValueError(f"No data found for ticker {self.ticker}")
             
-            # Ensure the data is sorted by date in descending order
-            data = data.sort_index(ascending=False)
+            # Create empty DataFrame with your desired timestamps
+            desired_times = pd.date_range(start=time_24h_ago, end=current_time, freq="h")
+            result = pd.DataFrame(index=desired_times, columns=["Close"], dtype=float)
             
-            # Get the latest closing price
-            latest_price = data['Close'].iloc[0]
+            # Fill with actual data where available
+            result.update(data[["Close"]])
             
-            # Find the same hour 24 hours earlier
-            latest_timestamp = data.index[0]
-            target_timestamp = latest_timestamp - pd.Timedelta(hours=24)
-            
-            # Get the price at the same hour 24 hours earlier
-            price_24h_ago = data.loc[data.index == target_timestamp, 'Close']
-            
-            if price_24h_ago.empty:
-                raise ValueError(f"No data found for the same hour 24 hours earlier for ticker {self.ticker}")
-            
-            price_24h_ago = price_24h_ago.iloc[0]
-            
+            # Extract values
+            latest_price = result["Close"].iloc[-1] if not result.empty else None
+            price_24h_ago = result["Close"].iloc[0] if not result.empty else None
+
+            # If data is missing, use the latest close price
+            if pd.isna(latest_price):
+                latest_price = hist["Close"].iloc[-1]
+
+            if pd.isna(price_24h_ago):
+                price_24h_ago = hist["Close"].iloc[-1]
+                
             # Calculate the 24-hour price change percentage
             price_24h_change = ((latest_price - price_24h_ago) / price_24h_ago) * 100
             
@@ -66,7 +79,6 @@ class Finance(IDotMatrixTile):
             logger.debug(f"Obtained data for {self.ticker}")
             logger.debug(f"Price obtained from Yahoo Finance: {self.price}")
             logger.debug(f"24-hour price change: {self.price_change_24h}%")
-
         except Exception as e:
             logger.error(f"An error occurred: {e}")
             raise
@@ -79,12 +91,16 @@ class Finance(IDotMatrixTile):
         draw = ImageDraw.Draw(image)
         font_path = current / f"../resources/retro-pixel-petty-5h.ttf"
         font = ImageFont.truetype(font_path, size=5)
+        
         color = "rgb(255, 255, 255)"  # symbol in white color
-        if self.price_change_24h >= 0:
-            price_color = "rgb(0, 255, 0)"
-        else:
-            price_color = "rgb(255, 0, 0)"
 
+        if self.price_change_24h > 0:
+            price_color = "rgb(0, 255, 0)"
+        elif self.price_change_24h < 0:
+            price_color = "rgb(255, 0, 0)"
+        else: # Unchanged price likely means the market is not open
+            price_color = "rgb(255, 255, 255)" 
+            
         init_x = self.get_text_initial_position(self.symbol)
         (x, y) = (init_x, 16)
         draw.text((x, y), self.symbol, fill=color, font=font)

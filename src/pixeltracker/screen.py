@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Optional
 
 # idotmatrix imports
-from idotmatrix import ConnectionManager, Image, Text, Clock
+from idotmatrix import ConnectionManager, Image, Text, Clock, System
 
 class IDotMatrixScreen:
     conn = ConnectionManager()
@@ -28,6 +28,11 @@ class IDotMatrixScreen:
             await self.conn.connectBySearch()
         else:
             await self.conn.connectByAddress(address)
+
+    async def reset(self):
+        self.logging.info("resetting device")
+        system = System()
+        await system.deleteDeviceData()
 
     async def set_image(self, image_path: Path, process_image: bool):
         """enables or disables the image mode and uploads a given image file"""

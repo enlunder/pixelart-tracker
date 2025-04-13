@@ -115,6 +115,8 @@ async def run():
 
     await idms.connect(args.address)
 
+    await idms.reset()
+
     server_task = asyncio.create_task(run_server())
     
     tile_collection = str(settings.TILES).split(",")

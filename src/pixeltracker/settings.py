@@ -24,16 +24,16 @@ class Settings(BaseSettings):
         description="URL of the reference to track cryptocurrencies data.",
     )
     CRYPTO_CURRENCIES = Field(
-        default="quai-network,bitcoin,ethereum",#,polkadot",
+        default="bitcoin,ethereum",
         description="Cryptocurrencies symbols split by commas.",
     )
     FINANCE_TICKERS = Field(
-        default="EURUSD=X",
-        description="Yahoo Finance tickers split by commas.",
+        default="GC=F,EURUSD=X",
+        description="Yahoo Finance tickers split by commas.", 
     )
     # General settings
     TILES = Field(
-        default="finance,crypto",
+        default="crypto,finance",
         description="Amount of tiles to show in loop.",
     )
     REFRESH_TIME = Field(
