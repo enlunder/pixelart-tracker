@@ -32,7 +32,6 @@ class Finance(IDotMatrixTile):
 
     async def get_data(self):
         try:
-
             # Get current UTC time (or use a specific time)
             current_time = datetime.utcnow().replace(minute=0, second=0, microsecond=0)
             time_24h_ago = current_time - timedelta(hours=24)
@@ -46,29 +45,38 @@ class Finance(IDotMatrixTile):
                 repair=True,
             )           
 
-            # Also fetch historical data, to use daily closes if needed
-            hist = t.history(period="5d", interval="1d")
+            # Fetch historical data up until the day before today
+            end_date = current_time - timedelta(days=1)
+            start_date = end_date - timedelta(days=4)  # 4 days of data, but up to the day before today
+            hist = t.history(start=start_date, end=end_date, interval="1d")     
             if hist.empty:
                 raise ValueError(f"No data found for ticker {self.ticker}")
+            
+            # Ensure the index of data is in UTC
+            data.index = pd.to_datetime(data.index).tz_localize(None)
             
             # Create empty DataFrame with your desired timestamps
             desired_times = pd.date_range(start=time_24h_ago, end=current_time, freq="h")
             result = pd.DataFrame(index=desired_times, columns=["Close"], dtype=float)
             
-            # Fill with actual data where available
-            result.update(data[["Close"]])
+            # Reindex data to match the desired times and fill in the values
+            data_reindexed = data.reindex(desired_times)
+            result.update(data_reindexed[["Close"]])
+            
+            # Fill NaN values with the closest available data
+            result = result.fillna(method='ffill')
             
             # Extract values
             latest_price = result["Close"].iloc[-1] if not result.empty else None
             price_24h_ago = result["Close"].iloc[0] if not result.empty else None
-
+            
             # If data is missing, use the latest close price
             if pd.isna(latest_price):
                 latest_price = hist["Close"].iloc[-1]
 
             if pd.isna(price_24h_ago):
                 price_24h_ago = hist["Close"].iloc[-1]
-                
+            
             # Calculate the 24-hour price change percentage
             price_24h_change = ((latest_price - price_24h_ago) / price_24h_ago) * 100
             

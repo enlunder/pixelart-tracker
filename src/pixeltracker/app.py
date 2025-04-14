@@ -129,7 +129,7 @@ async def run():
             crypto_tiles = str(settings.CRYPTO_CURRENCIES).split(",")
             for crypto_tile in crypto_tiles:
                 instance = Crypto(idms, crypto_tile, args.test)
-                tiles.append(instance)
+#                tiles.append(instance)
         elif tile == "finance":
             finance_tiles = str(settings.FINANCE_TICKERS).split(",")
             for finance_tile in finance_tiles:
@@ -195,7 +195,10 @@ def main():
     logging.getLogger("idotmatrix").setLevel(settings.LOG_LEVEL)
     logging.getLogger('PIL').setLevel(settings.LOG_LEVEL)
     logging.getLogger("asyncio").setLevel(settings.LOG_LEVEL)
-
+    logging.getLogger("yfinance").setLevel(settings.LOG_LEVEL)
+    logging.getLogger("urllib3").setLevel(settings.LOG_LEVEL)
+    logging.getLogger("peewee").setLevel(settings.LOG_LEVEL)        
+    
     try:
         asyncio.run(run())
     except KeyboardInterrupt:

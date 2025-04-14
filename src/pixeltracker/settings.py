@@ -37,11 +37,11 @@ class Settings(BaseSettings):
         description="Amount of tiles to show in loop.",
     )
     REFRESH_TIME = Field(
-        default=15,
+        default=30,
         description="Refresh time amount in seconds to refresh the screen image with the next tile.",
     )
     LOG_LEVEL = Field(
-        default=logging.DEBUG,
+        default=logging.INFO,
         description="Default log level for different packages",
     )
 
