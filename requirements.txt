@@ -1,0 +1,11 @@
+colorlog
+asyncio
+aiohttp
+pillow
+fastapi
+bleak
+cryptography
+pydantic==1.10.21
+pydantic_core==2.27.2
+yfinance
+uvicorn

@@ -62,18 +62,23 @@ class Finance(IDotMatrixTile):
             # Reindex data to match the desired times and fill in the values
             data_reindexed = data.reindex(desired_times)
             result.update(data_reindexed[["Close"]])
+            logger.debug(result)
             
-            # Fill NaN values with the closest available data
-            result = result.fillna(method='ffill')
+            # Fill NaN values with the latest available data 
+            result = result.ffill()
             
             # Extract values
             latest_price = result["Close"].iloc[-1] if not result.empty else None
             price_24h_ago = result["Close"].iloc[0] if not result.empty else None
+            logger.debug(latest_price, price_24h_ago)
             
             # If data is missing, use the latest close price
             if pd.isna(latest_price):
+                logger.debug(f"Data was missing, using latest close price")
                 latest_price = hist["Close"].iloc[-1]
+                price_24h_ago = hist["Close"].iloc[-1]
 
+            # If 24h price is missing, use previous daily close
             if pd.isna(price_24h_ago):
                 price_24h_ago = hist["Close"].iloc[-1]
             
