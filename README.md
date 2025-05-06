@@ -28,6 +28,11 @@ pip install pixelart-tracker
 python -c "from src.pixeltracker.app import main;main()" 
 ```
 
+1.2 If you need to compile Pillow from scratch, as on my Raspberry Pi Zero, make sure to you have the following packages installed with e.g. apt: 
+```
+apt install libfreetype6-dev libjpeg-dev zlib1g-dev 
+```
+
 2.  Get your Youtube API KEY:
 Request an API KEY going here https://console.cloud.google.com/apis/api/youtube.googleapis.com/credentials
 
@@ -69,6 +74,7 @@ pix-track --address 37:D4:98:8F:2B:C8
 
 Try visiting `http://localhost:9191/docs/` in your browser.
 
+This web server enables use as an endpoint for LNbits Pay Links.
 
 **Code Explanation:**
 
