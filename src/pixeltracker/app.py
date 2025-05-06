@@ -13,6 +13,10 @@ from .tiles import Crypto, YoutubeViewers, Message, Finance
 
 from fastapi import FastAPI, BackgroundTasks, UploadFile, File, status, Request
 from fastapi.exceptions import HTTPException
+
+from pydantic import BaseModel # nytt
+import json # nytt
+
 import os
 import signal
 import shutil
@@ -20,9 +24,7 @@ import uvicorn
 
 PORT = 9191 # :TODO: move to settings
 
-
 test_subscribers = 0
-
 
 def parse_arguments(args):
     parser = argparse.ArgumentParser(description="control your 16x16 or 32x32 pixel displays")
@@ -62,6 +64,62 @@ message_queue = asyncio.Queue()
 async def receive_message(message: str):
     await message_queue.put(message)
     return {"message": "Received"}
+
+class WebhookPayload(BaseModel):
+    payment_hash: str
+    payment_request: str
+    amount: float
+    comment: str = None
+    webhook_data: dict = None
+
+    lnurlp: str
+    body: dict = {}
+    headers: dict = {}
+
+@server_app.post("/lnbits")
+async def handle_lnbits_webhook(request: Request, payload: WebhookPayload):
+    logger = logging.getLogger("pixelart-tracker")
+    
+    try:
+        # Log the incoming request
+        logger.info(f"Received webhook: {payload.dict()}")
+        
+        # Extract headers from the request
+        headers = request.headers
+        
+        # Convert headers to a dictionary
+        headers_dict = {k: v for k, v in headers.items()}
+        
+        # Extract product type from header data if present
+        # Try with LNbits Pay Links Webhook headers: {"product": "cookie"}
+        product = headers_dict.get("product", "")
+
+        # Convert millisats to sats
+        amount_in_sats = payload.amount / 1000.0
+
+        # Avoid characters and emojis the font does not support
+        if payload.comment is not None:
+            message = payload.comment
+            description = message.encode('iso-8859-1', 'ignore').decode('iso-8859-1')
+        else:
+            description = ""
+            
+        if product == "donation":
+            message = " Thank you! %1.0f sats %s! %s" % ( amount_in_sats, "received", description) 
+        elif len(product) > 0: 
+            product = product + " bought. "
+            message = product + "%1.0f sats %s! %s" % ( amount_in_sats, "received", description)
+        
+        message = message.upper()
+        logger.info(f"Message to display: {message}")
+        await message_queue.put(message)
+        
+        # Return a success response
+        return {"status": "success", "message": "Webhook processed"}
+
+    except Exception as e:
+        logger.error(f"Error processing webhook: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 # Define a function to run the FastAPI server
 async def run_server():
